@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 GridLayout board;
@@ -17,7 +18,6 @@ Cell cells[][]=new Cell[9][6];
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         board=findViewById(R.id.board);
-
         init();
         link();
 
@@ -69,14 +69,45 @@ Cell cells[][]=new Cell[9][6];
                             color = tempcolor;
                             cells[x][y].color = color;
                             cells[x][y].atoms++;
-                            cells[x][y].overload();
+                            boolean run=cells[x][y].overload();
+                            if(run)
+                            {
+                                boolean win=check();
+                                if(win) {
+                                    Toast.makeText(MainActivity.this, "Player "+color+" Wins", Toast.LENGTH_SHORT).show();
+                                    init();
+                                }
+                            }
                             Log.d("colors",Integer.toString(color));
                         }
+
                     }
                 });
             }
             cm.append("\n");
         }
         Log.d("cells","CRITICAL MASS : \n"+cm.toString());
+    }
+    public boolean check()
+    {
+        int score1=0,score2=0;
+        for(int i=0;i<9;i++)
+        {
+            for(int j=0;j<6;j++)
+            {
+                if(cells[i][j].color==1 && cells[i][j].atoms>0)
+                {
+                    score1=score1+cells[i][j].atoms;
+                }
+                if(cells[i][j].color==2 && cells[i][j].atoms>0)
+                {
+                    score2=score2+cells[i][j].atoms;
+                }
+            }
+        }
+        if((score1==0 && score2>0)|| (score2==0 && score1>0))
+            return true;
+        else
+            return false;
     }
 }

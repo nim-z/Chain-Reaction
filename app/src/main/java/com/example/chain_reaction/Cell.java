@@ -47,10 +47,12 @@ public class Cell {
         }
         critmass--;
     }
-    public void overload()
+    public boolean overload()
     {
+        boolean answer=false;
         if(this.atoms>this.critmass)
         {
+            answer=true;
             this.atoms=0;
             for(int i=0;i<4;i++)
             {
@@ -62,9 +64,11 @@ public class Cell {
                     drawBalls();
                 }
             }
-            color=0;
+            if(this.atoms==0)
+                color=0;
         }
         drawBalls();
+        return answer;
     }
     public void drawBalls()
     {
