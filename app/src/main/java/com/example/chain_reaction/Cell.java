@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 public class Cell {
     Context context;
-    String COLORS[]={"red","green","yellow","blue"};
+    String COLORS[]={"white","red","green","yellow","blue"};
     int color, critmass, atoms;
     ImageView balls;
     Cell neighbours[]=new Cell[4];
@@ -56,11 +56,13 @@ public class Cell {
             {
                 if(neighbours[i]!=null)
                 {
+                    neighbours[i].color=color;
                     neighbours[i].atoms++;
                     neighbours[i].overload();
                     drawBalls();
                 }
             }
+            color=0;
         }
         drawBalls();
     }

@@ -9,6 +9,7 @@ import android.widget.GridLayout;
 
 public class MainActivity extends AppCompatActivity {
 GridLayout board;
+int players=2,color=0;
 int i=0,j=0;
 Cell cells[][]=new Cell[9][6];
     @Override
@@ -19,6 +20,8 @@ Cell cells[][]=new Cell[9][6];
 
         init();
         link();
+
+        players=2;
 
     }
     public void init()
@@ -60,8 +63,15 @@ Cell cells[][]=new Cell[9][6];
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        cells[x][y].atoms++;
-                        cells[x][y].overload();
+                        int tempcolor=(color + 1) % players;
+                        tempcolor = (tempcolor==0)?players:tempcolor;
+                        if(cells[x][y].color==0 || cells[x][y].color==tempcolor) {
+                            color = tempcolor;
+                            cells[x][y].color = color;
+                            cells[x][y].atoms++;
+                            cells[x][y].overload();
+                            Log.d("colors",Integer.toString(color));
+                        }
                     }
                 });
             }
