@@ -2,6 +2,7 @@ package com.example.chain_reaction;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,15 +10,18 @@ import android.widget.GridLayout;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-GridLayout board;
-int players=2,color=0;
-int i=0,j=0;
-Cell cells[][]=new Cell[9][6];
+    String COLORS[]={"white","red","green","yellow","blue"};
+    GridLayout board;
+    int players=2,color=0;
+    int i=0,j=0;
+    Cell cells[][]=new Cell[9][6];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         board=findViewById(R.id.board);
+        board.setBackgroundColor(Color.parseColor(COLORS[1]));
         init();
         link();
 
@@ -63,24 +67,19 @@ Cell cells[][]=new Cell[9][6];
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int tempcolor=(color + 1) % players;
-                        tempcolor = (tempcolor==0)?players:tempcolor;
+                        int tempcolor=color + 1;
+                        tempcolor = (tempcolor>players)?1:tempcolor;
                         if(cells[x][y].color==0 || cells[x][y].color==tempcolor) {
                             color = tempcolor;
                             cells[x][y].color = color;
                             cells[x][y].atoms++;
-                            boolean run=cells[x][y].overload();
-                            if(run)
-                            {
-                                boolean win=check();
-                                if(win) {
-                                    Toast.makeText(MainActivity.this, "Player "+color+" Wins", Toast.LENGTH_SHORT).show();
-                                    init();
-                                }
-                            }
+                            cells[x][y].overload();
                             Log.d("colors",Integer.toString(color));
+                            check();
+                            tempcolor=color+1;
+                            tempcolor=(tempcolor>players)?1:tempcolor;
+                            board.setBackgroundColor(Color.parseColor(COLORS[tempcolor]));
                         }
-
                     }
                 });
             }
@@ -88,26 +87,34 @@ Cell cells[][]=new Cell[9][6];
         }
         Log.d("cells","CRITICAL MASS : \n"+cm.toString());
     }
-    public boolean check()
+
+    public void check()
     {
-        int score1=0,score2=0;
-        for(int i=0;i<9;i++)
+        boolean exist[]=new boolean[6];
+        StringBuffer col=new StringBuffer();
+        for(int i=0;i<9;i++) {
+            for (int j = 0; j < 6; j++) {
+                col.append(cells[i][j].color + " ");
+                exist[cells[i][j].color] |= true;
+            }
+            col.append("\n");
+        }
+        Log.d("check","COLORS : \n"+col.toString());
+        int pos=-1;
+        for(int i=1;i<=players;i++)
         {
-            for(int j=0;j<6;j++)
+            Log.d("check",i+" : Exist : "+exist[i]);
+            if(exist[i]==true && pos==-1)
+                pos=i;
+            else if(exist[i]==true)
             {
-                if(cells[i][j].color==1 && cells[i][j].atoms>0)
-                {
-                    score1=score1+cells[i][j].atoms;
-                }
-                if(cells[i][j].color==2 && cells[i][j].atoms>0)
-                {
-                    score2=score2+cells[i][j].atoms;
-                }
+                pos=0;
+                break;
             }
         }
-        if((score1==0 && score2>0)|| (score2==0 && score1>0))
-            return true;
-        else
-            return false;
+        if(pos>0)
+        {
+            Toast.makeText(MainActivity.this,"Player "+pos+" WON .",Toast.LENGTH_SHORT).show();
+        }
     }
 }
