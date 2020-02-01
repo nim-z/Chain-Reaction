@@ -78,9 +78,17 @@ public class MainActivity extends AppCompatActivity {
                             color = tempcolor;
                             cells[x][y].color = color;
                             cells[x][y].atoms++;
-                            cells[x][y].overload();
+                            boolean run=cells[x][y].overload();
                             Log.d("colors",Integer.toString(color));
-                            check();
+                            if(run)
+                            {
+                                boolean win=check();
+                                if(win)
+                                {
+                                    Toast.makeText(MainActivity.this, "Player"+color+"Won", Toast.LENGTH_SHORT).show();
+                                    init();
+                                }
+                            }
                             tempcolor=color+1;
                             tempcolor=(tempcolor>players)?1:tempcolor;
                             board.setBackgroundColor(Color.parseColor(COLORS[tempcolor]));
@@ -92,34 +100,26 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d("cells","CRITICAL MASS : \n"+cm.toString());
     }
-
-    public void check()
+    public boolean check()
     {
-        boolean exist[]=new boolean[6];
-        StringBuffer col=new StringBuffer();
-        for(int i=0;i<9;i++) {
-            for (int j = 0; j < 6; j++) {
-                col.append(cells[i][j].color + " ");
-                exist[cells[i][j].color] |= true;
-            }
-            col.append("\n");
-        }
-        Log.d("check","COLORS : \n"+col.toString());
-        int pos=-1;
-        for(int i=1;i<=players;i++)
+        int score1=0,score2=0;
+        for(int i=0;i<9;i++)
         {
-            Log.d("check",i+" : Exist : "+exist[i]);
-            if(exist[i]==true && pos==-1)
-                pos=i;
-            else if(exist[i]==true)
+            for(int j=0;j<6;j++)
             {
-                pos=0;
-                break;
+                if(cells[i][j].color==1 && cells[i][j].atoms>0)
+                {
+                    score1=score1+cells[i][j].atoms;
+                }
+                if(cells[i][j].color==2 && cells[i][j].atoms>0)
+                {
+                    score2=score2+cells[i][j].atoms;
+                }
             }
         }
-        if(pos>0)
-        {
-            Toast.makeText(MainActivity.this,"Player "+pos+" WON .",Toast.LENGTH_SHORT).show();
-        }
+        if((score1==0 && score2>0)|| (score2==0 && score1>0))
+            return true;
+        else
+            return false;
     }
 }
