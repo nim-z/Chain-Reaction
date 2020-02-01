@@ -23,13 +23,15 @@ public class MainActivity extends AppCompatActivity {
         board=findViewById(R.id.board);
         board.setBackgroundColor(Color.parseColor(COLORS[1]));
         init();
-        link();
+
 
         players=2;
 
     }
     public void init()
     {
+        color=0;
+        board.setBackgroundColor(Color.parseColor(COLORS[1]));
         for(int i=0;i<9;i++)
             for(int j=0;j<6;j++)
                 cells[i][j]=new Cell(this);
@@ -51,7 +53,14 @@ public class MainActivity extends AppCompatActivity {
                 //cells[i][j].linkNeighbours(i,j,cells);
             }
         }
+        link();
+    }
 
+    public int nextColor()
+    {
+        int tempcolor=(color + 1) % players;
+        tempcolor = (tempcolor==0)?players:tempcolor;
+        return tempcolor;
     }
     public void link()
     {
