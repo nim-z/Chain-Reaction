@@ -21,11 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         board=findViewById(R.id.board);
-        board.setBackgroundColor(Color.parseColor(COLORS[1]));
-        init();
-
-
-        players=2;
+        init();players=2;
 
     }
     public void init()
