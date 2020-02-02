@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         int tempcolor=color + 1;
                         tempcolor = (tempcolor>players)?1:tempcolor;
-                        if(cells[x][y].color==0 || cells[x][y].color==tempcolor) {
+                        if(cells[x][y].atoms==0 || (cells[x][y].color==tempcolor && cells[x][y].atoms>0)) {
                             color = tempcolor;
                             cells[x][y].color = color;
                             cells[x][y].atoms++;

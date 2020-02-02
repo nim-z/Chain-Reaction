@@ -64,8 +64,6 @@ public class Cell {
                     drawBalls();
                 }
             }
-            if(this.atoms==0)
-                color=0;
         }
         drawBalls();
         return answer;
