@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.Toast;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class MainActivity extends AppCompatActivity {
     String COLORS[]={"white","red","green","yellow","blue"};
     GridLayout board;
@@ -60,66 +63,74 @@ public class MainActivity extends AppCompatActivity {
     }
     public void link()
     {
-        StringBuffer cm=new StringBuffer();
         for(int i=0;i<9;i++)
         {
-            for(int j=0;j<6;j++)
-            {
-                cells[i][j].linkNeighbours(i,j,cells);
-                cm.append(cells[i][j].critmass+" ");
+            for(int j=0;j<6;j++) {
+                cells[i][j].linkNeighbours(i, j, cells);
 
-                final int x=i,y=j;
+                final int x = i, y = j;
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int tempcolor=color + 1;
-                        tempcolor = (tempcolor>players)?1:tempcolor;
-                        if(cells[x][y].atoms==0 || (cells[x][y].color==tempcolor && cells[x][y].atoms>0)) {
-                            color = tempcolor;
+                        if (cells[x][y].atoms == 0 || (cells[x][y].color == nextColor() && cells[x][y].atoms > 0)) {
+                            color = nextColor();
                             cells[x][y].color = color;
                             cells[x][y].atoms++;
-                            boolean run=cells[x][y].overload();
-                            Log.d("colors",Integer.toString(color));
-                            if(run)
-                            {
-                                boolean win=check();
-                                if(win)
-                                {
-                                    Toast.makeText(MainActivity.this, "Player"+color+"Won", Toast.LENGTH_SHORT).show();
+                            Queue<Cell> cellQueue=new LinkedList<>();
+                            cellQueue.add(cells[x][y]);
+                            cellQueue.addAll(cells[x][y].overload());
+                            boolean run = cellQueue.size() > 1;
+                            Log.d("colors", Integer.toString(color));
+                            if (run) {
+                                boolean win = check();
+                                if (win) {
+                                    Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
                                     init();
                                 }
                             }
-                            tempcolor=color+1;
-                            tempcolor=(tempcolor>players)?1:tempcolor;
-                            board.setBackgroundColor(Color.parseColor(COLORS[tempcolor]));
+                            drawCells(cellQueue);
+                            board.setBackgroundColor(Color.parseColor(COLORS[nextColor()]));
                         }
+                        printgrid();
                     }
                 });
             }
-            cm.append("\n");
         }
-        Log.d("cells","CRITICAL MASS : \n"+cm.toString());
     }
     public boolean check()
     {
-        int score1=0,score2=0;
+        int score[]=new int[6];
         for(int i=0;i<9;i++)
-        {
             for(int j=0;j<6;j++)
-            {
-                if(cells[i][j].color==1 && cells[i][j].atoms>0)
-                {
-                    score1=score1+cells[i][j].atoms;
-                }
-                if(cells[i][j].color==2 && cells[i][j].atoms>0)
-                {
-                    score2=score2+cells[i][j].atoms;
-                }
-            }
+                if(cells[i][j].atoms>0)
+                score[cells[i][j].color]+=cells[i][j].atoms;
+        return ((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0));
+    }
+
+    public void printgrid()
+    {
+        StringBuilder grid=new StringBuilder();
+        for(int i=0;i<9;++i) {
+            for (int j = 0; j < 6; ++j)
+                grid.append(cells[i][j].atoms+"\t");
+            grid.append("\n");
         }
-        if((score1==0 && score2>0)|| (score2==0 && score1>0))
-            return true;
-        else
-            return false;
+        Log.d("cells","Grid :\n"+grid.toString());
+    }
+
+    public void drawCells(Queue<Cell> cellQueue)
+    {
+        StringBuilder q=new StringBuilder();
+        while(!cellQueue.isEmpty())
+        {
+            Cell cell=cellQueue.remove();
+            q.append(" < "+cell.x+" , "+cell.y+" > \t");
+            Queue<Cell> temp=cell.overload();
+            if(temp.size()>0)
+                cellQueue.addAll(temp);
+            cell.drawBalls();
+            check();
+        }
+        Log.d("cells","Queue , \n"+q.toString());
     }
 }
