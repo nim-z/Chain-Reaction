@@ -73,6 +73,7 @@ public class Cell {
                     //drawBalls();
                     cellQueue.add(neighbours[i]);
                     Log.d("cells", "cellQueue : neighbours : < " + neighbours[i].x + " , " + neighbours[i].y + " > " + neighbours[i].atoms);
+                    Log.d("cells","overload happpen");
                 }
             }
         }
@@ -83,7 +84,7 @@ public class Cell {
     public void resetCell(){
         atoms=0;
         color=0;
-        drawBalls();
+       // drawBalls();
     }
         public void drawBalls()
         {

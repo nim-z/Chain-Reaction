@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void restartGame(){
+        //cellQueue.clear();
         for(int i=0;i<9;i++) {
             for(int j=0;j<6;j++) {
                 cells[i][j].resetCell();
@@ -81,6 +82,15 @@ public class MainActivity extends AppCompatActivity {
         turns=1;
         color=0;
         board.setBackgroundColor(Color.parseColor(COLORS[1]));
+    }
+    public void drawAllBalls(){
+        for(int i=0;i<9;i++)
+        {
+            for(int j=0;j<6;j++)
+            {
+                cells[i][j].drawBalls();
+            }
+        }
     }
     public void link() {
         final Vibrator vibe= (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -131,12 +141,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("score","CHECK : "+score[1]+" : "+score[2]+" :: "+ wincondition);
         if ( (wincondition && turns > 2)) {
            // Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
-            Log.d("SCORE","winner : "+color);
+            Log.d("cells","winner : "+color);
             Intent i=new Intent(MainActivity.this,Result.class);
             i.putExtra("Player",color);
             turns=1;
             startActivityForResult(i,1);
-            //restartGame();
+            restartGame();
         }
     }
 
@@ -176,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean flag=data.getBooleanExtra("reset",false);
                 Log.d("Intentb/w","flag : "+flag);
                 if(flag){
-                    restartGame();
+                   drawAllBalls();
                 }
             }
         }
