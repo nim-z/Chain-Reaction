@@ -26,6 +26,7 @@
         android:layout_width="0dp"
         android:layout_height="34dp"
         android:gravity="center"
+        android:fontFamily="@font/spaceage"
         android:text="CHAIN REACTION"
         android:textColor="#DDD3CCCC"
         android:textSize="30sp"

@@ -3,9 +3,11 @@ package com.example.chain_reaction;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
@@ -81,12 +83,14 @@ public class MainActivity extends AppCompatActivity {
         board.setBackgroundColor(Color.parseColor(COLORS[1]));
     }
     public void link() {
+        final Vibrator vibe= (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         for(int i=0;i<9;i++) {
             for(int j=0;j<6;j++) {
                 final int x = i, y = j;
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        vibe.vibrate(50);
                         if (cells[x][y].atoms == 0 || (cells[x][y].color == nextColor() && cells[x][y].atoms > 0)) {
                             color = nextColor();
                             cells[x][y].color = color;
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("colors", Integer.toString(color));
                             if(run)
                             {
+                                Log.d("checking","check taking place in click");
                                 check();
                             }
                             board.setBackgroundColor(Color.parseColor(COLORS[nextColor()]));
@@ -129,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("SCORE","winner : "+color);
             Intent i=new Intent(MainActivity.this,Result.class);
             i.putExtra("Player",color);
+            turns=1;
             startActivityForResult(i,1);
             //restartGame();
         }
@@ -173,8 +179,6 @@ public class MainActivity extends AppCompatActivity {
                     restartGame();
                 }
             }
-            if(resultCode==Activity.RESULT_CANCELED)
-            {}
         }
     }
 }
