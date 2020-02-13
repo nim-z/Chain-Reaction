@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 //cells[i][j].linkNeighbours(i,j,cells);
             }
         }
+        firstlink();
         link();
     }
 
@@ -61,13 +62,27 @@ public class MainActivity extends AppCompatActivity {
         tempcolor = (tempcolor==0)?players:tempcolor;
         return tempcolor;
     }
+    public void firstlink(){
+        for(int i=0;i<9;i++)
+        {
+            for(int j=0;j<6;j++)
+            {
+                cells[i][j].linkNeighbours(i,j,cells);
+            }
+        }
+    }
+    public void restartGame(){
+        for(int i=0;i<9;i++) {
+            for(int j=0;j<6;j++)
+            {    cells[i][j].resetCell();} }
+        turns=1;
+        color=0;
+    }
     public void link()
     {
         for(int i=0;i<9;i++)
         {
             for(int j=0;j<6;j++) {
-                cells[i][j].linkNeighbours(i, j, cells);
-
                 final int x = i, y = j;
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -81,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
                             cellQueue.addAll(cells[x][y].overload());
                             boolean run = cellQueue.size() > 1;
                             Log.d("colors", Integer.toString(color));
-                            if (run) {
+                            if(run)
+                            {
                                 check();
                             }
                             drawCells(cellQueue);
@@ -96,15 +112,20 @@ public class MainActivity extends AppCompatActivity {
     }
     public void check()
     {
-        int score[]=new int[6];
-        for(int i=0;i<9;i++)
-            for(int j=0;j<6;j++)
+        int[] score=new int[6];
+        score[1]=0;
+        score[2]=0;
+        for(int i=0;i<9;i++) {
+            for(int j=0;j<6;j++) {
                 if(cells[i][j].atoms>0)
                 score[cells[i][j].color]+=cells[i][j].atoms;
-                Log.d("cells","CHECK : "+score[1]+" : "+score[2]+" :: "+((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0)));
-        if (((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0)) && turns > 2) {
+            }
+        }
+        boolean wincondition = (score[1] == 0 && score[2] > 0) || (score[2] == 0 && score[1] > 0);
+        Log.d("score","CHECK : "+score[1]+" : "+score[2]+" :: "+ wincondition);
+        if ( (wincondition && turns > 2)) {
             Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
-            init();
+            restartGame();
         }
     }
 
@@ -116,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 grid.append(cells[i][j].atoms+"\t");
             grid.append("\n");
         }
-        Log.d("cells","Grid :\n"+grid.toString());
+        Log.d("cellgrid","Grid :\n"+grid.toString());
     }
 
     public void drawCells(Queue<Cell> cellQueue)

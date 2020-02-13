@@ -80,7 +80,11 @@ public class Cell {
         return cellQueue;
     }
 
-
+    public void resetCell(){
+        atoms=0;
+        color=0;
+        drawBalls();
+    }
         public void drawBalls()
         {
             Bitmap bitmap = Bitmap.createBitmap(140, 140, Bitmap.Config.RGB_565);
