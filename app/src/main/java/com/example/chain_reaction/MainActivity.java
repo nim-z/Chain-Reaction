@@ -2,6 +2,8 @@ package com.example.chain_reaction;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
             for(j=0;j<6;j++) {
                 Log.d("cells in board","row : "+i+" :: column : "+j);
                 GridLayout.LayoutParams params=new GridLayout.LayoutParams();
-                params.width=140;
-                params.height=140;
+                params.width=160;
+                params.height=160;
                 params.bottomMargin=2;
                 params.topMargin=2;
                 params.leftMargin=2;
@@ -56,32 +58,30 @@ public class MainActivity extends AppCompatActivity {
         link();
     }
 
-    public int nextColor()
-    {
+    public int nextColor() {
         int tempcolor=(color + 1) % players;
         tempcolor = (tempcolor==0)?players:tempcolor;
         return tempcolor;
     }
     public void firstlink(){
-        for(int i=0;i<9;i++)
-        {
-            for(int j=0;j<6;j++)
-            {
+        for(int i=0;i<9;i++) {
+            for(int j=0;j<6;j++) {
                 cells[i][j].linkNeighbours(i,j,cells);
             }
         }
     }
     public void restartGame(){
         for(int i=0;i<9;i++) {
-            for(int j=0;j<6;j++)
-            {    cells[i][j].resetCell();} }
+            for(int j=0;j<6;j++) {
+                cells[i][j].resetCell();
+            }
+        }
         turns=1;
         color=0;
+        board.setBackgroundColor(Color.parseColor(COLORS[1]));
     }
-    public void link()
-    {
-        for(int i=0;i<9;i++)
-        {
+    public void link() {
+        for(int i=0;i<9;i++) {
             for(int j=0;j<6;j++) {
                 final int x = i, y = j;
                 cells[x][y].balls.setOnClickListener(new View.OnClickListener() {
@@ -100,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
                             {
                                 check();
                             }
-                            drawCells(cellQueue);
                             board.setBackgroundColor(Color.parseColor(COLORS[nextColor()]));
+                            drawCells(cellQueue);
+
                         }
                         turns++;
                         printgrid();
@@ -124,8 +125,12 @@ public class MainActivity extends AppCompatActivity {
         boolean wincondition = (score[1] == 0 && score[2] > 0) || (score[2] == 0 && score[1] > 0);
         Log.d("score","CHECK : "+score[1]+" : "+score[2]+" :: "+ wincondition);
         if ( (wincondition && turns > 2)) {
-            Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
-            restartGame();
+           // Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
+            Log.d("SCORE","winner : "+color);
+            Intent i=new Intent(MainActivity.this,Result.class);
+            i.putExtra("Player",color);
+            startActivityForResult(i,1);
+            //restartGame();
         }
     }
 
@@ -154,5 +159,22 @@ public class MainActivity extends AppCompatActivity {
             check();
         }
         Log.d("cells","Queue , \n"+q.toString());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("Intentb/w","inside onactivityresult");
+        if((requestCode==1)){
+            if(resultCode== Activity.RESULT_OK)
+            {
+                boolean flag=data.getBooleanExtra("reset",false);
+                Log.d("Intentb/w","flag : "+flag);
+                if(flag){
+                    restartGame();
+                }
+            }
+            if(resultCode==Activity.RESULT_CANCELED)
+            {}
+        }
     }
 }
