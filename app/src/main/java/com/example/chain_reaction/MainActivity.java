@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     String COLORS[]={"white","red","green","yellow","blue"};
     GridLayout board;
     int players=2,color=0;
-    int i=0,j=0;
+    int i=0,j=0,turns=1;
     Cell cells[][]=new Cell[9][6];
 
     @Override
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void init()
     {
-        color=0;
+        color=0;turns=0;
         board.setBackgroundColor(Color.parseColor(COLORS[1]));
         for(int i=0;i<9;i++)
             for(int j=0;j<6;j++)
@@ -82,29 +82,30 @@ public class MainActivity extends AppCompatActivity {
                             boolean run = cellQueue.size() > 1;
                             Log.d("colors", Integer.toString(color));
                             if (run) {
-                                boolean win = check();
-                                if (win) {
-                                    Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
-                                    init();
-                                }
+                                check();
                             }
                             drawCells(cellQueue);
                             board.setBackgroundColor(Color.parseColor(COLORS[nextColor()]));
                         }
+                        turns++;
                         printgrid();
                     }
                 });
             }
         }
     }
-    public boolean check()
+    public void check()
     {
         int score[]=new int[6];
         for(int i=0;i<9;i++)
             for(int j=0;j<6;j++)
                 if(cells[i][j].atoms>0)
                 score[cells[i][j].color]+=cells[i][j].atoms;
-        return ((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0));
+                Log.d("cells","CHECK : "+score[1]+" : "+score[2]+" :: "+((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0)));
+        if (((score[1]==0 && score[2]>0)|| (score[2]==0 && score[1]>0)) && turns > 2) {
+            Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
+            init();
+        }
     }
 
     public void printgrid()

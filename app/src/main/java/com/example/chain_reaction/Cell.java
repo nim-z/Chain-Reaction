@@ -63,8 +63,9 @@ public class Cell {
     public Queue<Cell> overload() {
         Queue<Cell> cellQueue = new LinkedList<>();
         if (this.atoms > this.critmass) {
-            this.atoms = 0;
+            this.atoms -=this.critmass+1;
             Log.d("cells","cellQueue : cell : < "+x+" , "+y+" > "+atoms);
+            //atoms=0;
             for (int i = 0; i < 4; i++) {
                 if (neighbours[i] != null) {
                     neighbours[i].atoms++;
