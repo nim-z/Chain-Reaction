@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 cells[i][j].resetCell();
             }
         }
-        turns=1;
+        turns=0;
         color=0;
         board.setBackgroundColor(Color.parseColor(COLORS[1]));
     }
@@ -113,11 +113,10 @@ public class MainActivity extends AppCompatActivity {
                             if(run)
                             {
                                 Log.d("checking","check taking place in click");
-                                check();
+                                check(cellQueue);
                             }
                             board.setBackgroundColor(Color.parseColor(COLORS[nextColor()]));
                             drawCells(cellQueue);
-
                         }
                         turns++;
                         printgrid();
@@ -126,11 +125,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void check()
+    public void check(Queue<Cell> cellQueue)
     {
         int[] score=new int[6];
-        score[1]=0;
-        score[2]=0;
+        //score[1]=0;
+       // score[2]=0;
         for(int i=0;i<9;i++) {
             for(int j=0;j<6;j++) {
                 if(cells[i][j].atoms>0)
@@ -139,12 +138,14 @@ public class MainActivity extends AppCompatActivity {
         }
         boolean wincondition = (score[1] == 0 && score[2] > 0) || (score[2] == 0 && score[1] > 0);
         Log.d("score","CHECK : "+score[1]+" : "+score[2]+" :: "+ wincondition);
-        if ( (wincondition && turns > 2)) {
+        if ( (wincondition && turns >=2)) {
            // Toast.makeText(MainActivity.this, "Player" + color + "Won", Toast.LENGTH_SHORT).show();
             Log.d("cells","winner : "+color);
             Intent i=new Intent(MainActivity.this,Result.class);
             i.putExtra("Player",color);
-            turns=1;
+            turns=0;
+            //cellQueue.clear();
+           // drawCells(cellQueue);
             startActivityForResult(i,1);
             restartGame();
         }
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             if(temp.size()>0)
                 cellQueue.addAll(temp);
             cell.drawBalls();
-            check();
+            check(cellQueue);
         }
         Log.d("cells","Queue , \n"+q.toString());
     }
